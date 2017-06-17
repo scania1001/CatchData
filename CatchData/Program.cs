@@ -77,20 +77,22 @@ namespace CatchData
                 .ToArray();
 
 
-                o.SID = int.Parse(Stockid);
-                o.Year  = Int32.Parse(toStock[0]);
-                //o.Sdate = toStock[1]  == "" ? null : (DateTime?)DateTime.Parse(toStock[1]);
-                o.ExRdate =DateTime.Parse(toStock[1]);
-                //o.ExR = toStock[3] == "" ? null : (Decimal?)Decimal.Parse(toStock[4]);
-                o.ExDdate = toStock[3] == "" ? null : (DateTime?)DateTime.Parse(toStock[5]);
-                // o.ExD = toStock[6] == "" ? null : (Decimal?)Decimal.Parse(toStock[6]);
-                // o.Cashdate = toStock[7] == "" ? null : (DateTime?)DateTime.Parse(toStock[7]);
-                o.CashDividendTotal = toStock[2] == "" ? null : (Decimal?)Decimal.Parse(toStock[2]);
-                o.StockDividendSurplus = toStock[4] == "" ? null : (Decimal?)Decimal.Parse(toStock[4]);
-                o.StockDividendCR = toStock[5] == "" ? null : (Decimal?)Decimal.Parse(toStock[5]);
-                // o.AvgStockPrice = toStock[15] == "" ? null : (Decimal?)Decimal.Parse(toStock[15]);
-                //o.YieldRate = toStock[16] == "" ? null : (Decimal?)Decimal.Parse(toStock[16]);
-                _dictionary.Add(toStock[0].ToString(), o);
+                o.SID                  = Int32.Parse(Stockid);
+                o.Year                 = Int32.Parse(toStock[0]) - 1;
+                o.ExRdate              = 
+                    toStock[1].ToString() == ""  ? null :
+                    toStock[1].ToString() == "-" ? 
+                        (DateTime?)DateTime.Parse(toStock[0] + "-01-01") : 
+                        (DateTime?)DateTime.Parse(toStock[0] + "-" + toStock[1]);
+                o.CashDividendTotal    = toStock[2]                == "" ? null : (Decimal?) Decimal. Parse(toStock[2]);
+                o.ExDdate              = 
+                    toStock[3].ToString() == "" ? null :
+                    toStock[3].ToString() == "-" ?
+                        (DateTime?)DateTime.Parse(toStock[0] + "-01-01") : 
+                        (DateTime?)DateTime.Parse(toStock[0] + "-" + toStock[3]);
+                o.StockDividendSurplus = toStock[4].ToString()     == "" ? null : (Decimal?) Decimal. Parse(toStock[4]);
+                o.StockDividendCR      = toStock[5].ToString()     == "" ? null : (Decimal?) Decimal. Parse(toStock[5]);
+                _dictionary.Add(toStock[0], o);
                 return o;
             }).ToList();
 
