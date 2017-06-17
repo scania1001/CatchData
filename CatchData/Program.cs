@@ -32,10 +32,10 @@ namespace CatchData
     public class Program
     {
         //static Dictionary<string, StockData> _dictionary = new Dictionary<string, StockData>();
-        
+
         static void Main(string[] args)
         {
-            
+
 
         }
         public static Dictionary<string, StockData> GetStock(string Stockid)
@@ -48,7 +48,7 @@ namespace CatchData
 
             var nvc = new NameValueCollection();
             nvc["is_check"] = "1";
-            var buffer = wc.UploadValues(string.Format("http://pchome.megatime.com.tw/stock/sto3/ock1/sid{0}.html", Stockid),nvc);
+            var buffer = wc.UploadValues(string.Format("http://pchome.megatime.com.tw/stock/sto3/ock1/sid{0}.html", Stockid), nvc);
             // Thread.Sleep(3000);
             var htmlstr = Encoding.UTF8.GetString(buffer);
             MemoryStream ms = new MemoryStream(buffer);
@@ -58,37 +58,37 @@ namespace CatchData
             HtmlDocument hdc = new HtmlDocument();
 
             //List<StockData> Stock = new List<StockData>();
-            
+
             var table = doc.DocumentNode.SelectNodes("//*[@id='bttb']/table[2]");//抓table//*[@id="bttb"]/table[2]
             var list_tr = table.ToList<HtmlNode>()[0];//第1個table
             hdc.LoadHtml(list_tr.InnerHtml);//解析html
             var tr_in_tbl = hdc.DocumentNode.SelectNodes("//tr");
             var td_in_tr = tr_in_tbl.ToList<HtmlNode>();
 
-            var fet = td_in_tr.ToList<HtmlNode>().Skip(2).Take(16);
+            var fet = td_in_tr.Skip(3).Take(16);
             var fe = fet.Select(tr =>
             {
                 HtmlDocument hdctmp = new HtmlDocument();
                 hdctmp.LoadHtml(tr.InnerHtml);
-
+                var o = new StockData();
                 var toStock =
                 hdctmp.DocumentNode.SelectNodes("//td")
                 .Select(tr2 => tr2.InnerText)
                 .ToArray();
 
-                var o = new StockData();
+
                 o.SID = int.Parse(Stockid);
-                o.Year = Int32.Parse(toStock[0]);
-                //o.Sdate = toStock[1] == "" ? null : (DateTime?)DateTime.Parse(toStock[1]);
-                //o.ExRdate =DateTime.Parse(toStock[3]);
+                o.Year  = Int32.Parse(toStock[0]);
+                //o.Sdate = toStock[1]  == "" ? null : (DateTime?)DateTime.Parse(toStock[1]);
+                o.ExRdate =DateTime.Parse(toStock[1]);
                 //o.ExR = toStock[3] == "" ? null : (Decimal?)Decimal.Parse(toStock[4]);
-                //o.ExDdate = toStock[5] == "" ? null : (DateTime?)DateTime.Parse(toStock[5]);
-               // o.ExD = toStock[6] == "" ? null : (Decimal?)Decimal.Parse(toStock[6]);
-               // o.Cashdate = toStock[7] == "" ? null : (DateTime?)DateTime.Parse(toStock[7]);
+                o.ExDdate = toStock[3] == "" ? null : (DateTime?)DateTime.Parse(toStock[5]);
+                // o.ExD = toStock[6] == "" ? null : (Decimal?)Decimal.Parse(toStock[6]);
+                // o.Cashdate = toStock[7] == "" ? null : (DateTime?)DateTime.Parse(toStock[7]);
                 o.CashDividendTotal = toStock[2] == "" ? null : (Decimal?)Decimal.Parse(toStock[2]);
                 o.StockDividendSurplus = toStock[4] == "" ? null : (Decimal?)Decimal.Parse(toStock[4]);
                 o.StockDividendCR = toStock[5] == "" ? null : (Decimal?)Decimal.Parse(toStock[5]);
-               // o.AvgStockPrice = toStock[15] == "" ? null : (Decimal?)Decimal.Parse(toStock[15]);
+                // o.AvgStockPrice = toStock[15] == "" ? null : (Decimal?)Decimal.Parse(toStock[15]);
                 //o.YieldRate = toStock[16] == "" ? null : (Decimal?)Decimal.Parse(toStock[16]);
                 _dictionary.Add(toStock[0].ToString(), o);
                 return o;
